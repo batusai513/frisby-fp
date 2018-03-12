@@ -1,6 +1,6 @@
-import { compose, map, prop, path, curry, remove, append } from "ramda";
+import { compose, map, prop, props, path, curry, remove, append } from "ramda";
 import { mconcat, fold } from "pointfree-fantasy";
-import { Some, None } from 'fantasy-options';
+import { Some, None } from "fantasy-options";
 import daggy from "daggy";
 import { Http, indexOf } from "../utils";
 
@@ -15,10 +15,10 @@ const baseUrl =
   "https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=14c4ebab40155d8c54dacb0642f46d68&tags={TAGS}&extras=url_s&format=json&jsoncallback=?";
 
 // Photo { src :: Url, x :: Point, y :: Point }
-export const Photo = daggy.tagged("Photo", ["src", "x", "y"]);
+export const Photo = daggy.tagged("Photo", ["src", "w", "h", "x", "y"]);
 
-//newPhoto :: Url -> Photo
-const newPhoto = url => Photo(url, 0, 0);
+//newPhoto :: [props] -> Photo
+const newPhoto = props => Photo(...props, 0, 0);
 
 const makeUrl = t => {
   var [start, end] = baseUrl.split("{TAGS}");
@@ -27,7 +27,7 @@ const makeUrl = t => {
 
 // toPhoto :: JSON -> [Photo]
 const toPhoto = compose(
-  map(compose(newPhoto, prop("url_s"))),
+  map(compose(newPhoto, props(["url_s", "width_s", "height_s"]))),
   prop("photo"),
   prop("photos"),
   prop("data")

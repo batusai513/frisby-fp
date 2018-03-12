@@ -14,20 +14,29 @@ export default class Collage extends React.Component {
 
   createImages(images) {
     return images.map(p => (
-      <DragImage key={p.src} src={p.src} style={{ top: p.y, left: p.x }} />
+      <DragImage
+        key={p.src}
+        src={p.src}
+        meta={{ width: p.w, height: p.h }}
+        style={{ top: p.y, left: p.x }}
+      />
     ));
   }
 
   // onDrop :: Event -> State Photos
   onDrop = ({
     dataTransfer: dt,
+    target: t,
     currentTarget: ct,
     clientX: x,
     clientY: y
   }) => {
     const src = dt.getData("text");
+    const w = dt.getData("width");
+    const h = dt.getData("height");
     const offset = ct.getBoundingClientRect().top;
-    const photo = Photo(src, x, y - offset);
+    const photo = Photo(src, w, h, x, y - offset);
+    console.warn(t);
     this.updatePhotos(replacePhoto(photo, this.state.photos));
   };
 

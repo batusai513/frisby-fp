@@ -25,13 +25,9 @@ export default class Flickr extends React.Component {
     this.setState({ results: xs });
   };
 
-  onDragStart = ({ dataTransfer: dt, currentTarget: t }) => {
-    dt.setData('text', t.src);
-  };
-
   createImages(images) {
     return images.map(p => (
-      <DragImage key={p.src} src={p.src} />
+      <DragImage key={p.src} src={p.src} meta={{ width: p.w, height: p.h }} />
     ));
   }
 
