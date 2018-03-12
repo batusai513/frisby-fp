@@ -1,5 +1,6 @@
 import React from 'react';
 import { flickrSearch } from '../models/flickr';
+import DragImage from './DragImage';
 
 export default class Flickr extends React.Component {
   state = {
@@ -19,6 +20,7 @@ export default class Flickr extends React.Component {
     );
   };
 
+  // updateResults :: [Url] -> State Results
   updateResults = xs => {
     this.setState({ results: xs });
   };
@@ -28,19 +30,14 @@ export default class Flickr extends React.Component {
   };
 
   createImages(images) {
-    return images.map(src => (
-      <img
-        key={src}
-        src={src}
-        draggable={true}
-        onDragStart={this.onDragStart}
-      />
+    return images.map(p => (
+      <DragImage key={p.src} src={p.src} />
     ));
   }
 
   render() {
     return (
-      <div style={styles}>
+      <div id="flickr">
         <input
           onChange={this.termChanged}
           value={this.state.term}
@@ -52,9 +49,3 @@ export default class Flickr extends React.Component {
     );
   }
 }
-
-const styles = {
-  paddingBottom: '30vh',
-  height: '70vh',
-  overflow: 'auto'
-};

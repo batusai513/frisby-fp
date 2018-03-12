@@ -1,11 +1,11 @@
-import React from 'react';
-import { append } from 'ramda';
-
-const preventDefault = e => e.preventDefault();
+import React from "react";
+import { Photo, replacePhoto } from "../models/flickr";
+import DragImage from './DragImage';
+import { preventDefault } from '../utils';
 
 export default class Collage extends React.Component {
   state = {
-    photos: [],
+    photos: []
   };
 
   updatePhotos = xs => {
@@ -13,13 +13,22 @@ export default class Collage extends React.Component {
   };
 
   createImages(images) {
-    return images.map(src => <img key={src} src={src} />);
+    return images.map(p => (
+      <DragImage key={p.src} src={p.src} style={{ top: p.y, left: p.x }} />
+    ));
   }
 
   // onDrop :: Event -> State Photos
-  onDrop = ({ dataTransfer: dt }) => {
-    const src = dt.getData('text');
-    this.updatePhotos(append(src, this.state.photos));
+  onDrop = ({
+    dataTransfer: dt,
+    currentTarget: ct,
+    clientX: x,
+    clientY: y
+  }) => {
+    const src = dt.getData("text");
+    const offset = ct.getBoundingClientRect().top;
+    const photo = Photo(src, x, y - offset);
+    this.updatePhotos(replacePhoto(photo, this.state.photos));
   };
 
   render() {
@@ -28,18 +37,9 @@ export default class Collage extends React.Component {
         id="collage"
         onDrop={this.onDrop}
         onDragOver={preventDefault}
-        style={styles}
       >
         <div id="photos">{this.createImages(this.state.photos)}</div>
       </div>
     );
   }
 }
-
-const styles = {
-  height: '30vh',
-  borderTop: '2px dotted',
-  position: 'fixed',
-  bottom: 0,
-  width: '100%',
-};

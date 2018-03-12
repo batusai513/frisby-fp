@@ -12,7 +12,7 @@ class App extends Component {
   };
   render() {
     return (
-      <div className="App">
+      <div id="App">
         {this.state.error ? <p>this.state.error</p> : null}
         <Flickr showError={this.showError} />
         <Collage />
